@@ -344,7 +344,7 @@ fit_LOCF_landmark <- function(data_long,
                               individual_id,
                               event_time,
                               event_status,
-                              survival_submodel = c("standard_cox", "cause_specific", "fine_gray"),
+                              survival_submodel = c("standard_cox", "cause_specific", "fine_gray", "cph"),
                               b) {
   call <- match.call()
 
