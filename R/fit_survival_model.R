@@ -39,7 +39,7 @@ fit_survival_model <- function(data,
                                covariates,
                                event_time,
                                event_status,
-                               survival_submodel = c("standard_cox", "cause_specific", "fine_gray"),
+                               survival_submodel = c("standard_cox", "cause_specific", "fine_gray", "cph"),
                                x_hor) {
   #Checks
   #####
@@ -89,6 +89,12 @@ fit_survival_model <- function(data,
       stop("event_status column should contain only values 0, 1, and 2 for cause_specific or fine_gray survival submodel,
         or values 0 and 1 for standard_cox survival submodel")
     }
+  }       
+  if(survival_submodel %in% c("cph")){
+    if(!(setequal(data[[event_status]],0:1))){
+      stop("event_status column should contain only values 0, 1, and 2 for cause_specific or fine_gray survival submodel,
+        or values 0 and 1 for cph survival submodel")
+    }
   }
 
   data[[individual_id]] <- as.factor(data[[individual_id]])
@@ -123,6 +129,14 @@ fit_survival_model <- function(data,
           as.formula(paste0("Surv(", event_time, ", ", event_status, "==1) ~",
                             paste0(covariates, collapse = "+")))
         model_survival <- coxph(formula_survival, data = data_train,x=TRUE)
+        data_test$event_prediction <- as.numeric(riskRegression::predictRisk(model_survival, times = x_hor, newdata = data_test))
+      }
+
+      if (survival_submodel == "cph") {
+        formula_survival <-
+          as.formula(paste0("Surv(", event_time, ", ", event_status, "==1) ~",
+                            paste0(covariates, collapse = "+")))
+        model_survival <- cph(formula_survival, data = data_train,x=TRUE, y=TRUE)
         data_test$event_prediction <- as.numeric(riskRegression::predictRisk(model_survival, times = x_hor, newdata = data_test))
       }
 
