@@ -330,6 +330,7 @@ fit_LOCF_longitudinal <- function(data_long,
 #' @importFrom stats as.formula
 #' @importFrom survival Surv
 #' @importFrom survival coxph
+#' @importFrom rms cph
 #' @importFrom prodlim Hist
 #' @export
 
