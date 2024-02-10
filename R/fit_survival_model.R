@@ -136,7 +136,7 @@ fit_survival_model <- function(data,
         formula_survival <-
           as.formula(paste0("Surv(", event_time, ", ", event_status, "==1) ~",
                             paste0(covariates, collapse = "+")))
-        model_survival <- cph(formula_survival, data = data_train,x=TRUE, y=TRUE)
+        model_survival <- cph(formula_survival, data = data_train,x=TRUE, y=TRUE, surv=TRUE)
         data_test$event_prediction <- as.numeric(riskRegression::predictRisk(model_survival, times = x_hor, newdata = data_test))
       }
 
